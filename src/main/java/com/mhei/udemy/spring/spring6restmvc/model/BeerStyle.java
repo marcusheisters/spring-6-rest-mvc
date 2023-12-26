@@ -8,6 +8,6 @@ public enum BeerStyle {
     PILSENER,
     IPA,
     CRAFT,
-    YEAST
+    PALE_ALE, YEAST
 
 }
