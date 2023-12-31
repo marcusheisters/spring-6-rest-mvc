@@ -23,9 +23,9 @@ public class BeerController {
 
     @PostMapping
     public ResponseEntity<HttpStatus> handlePost(@RequestBody Beer beer) {
-        Beer savedBeer = beerService.saveNewBeer(beer);
+        beerService.saveNewBeer(beer);
 
-        return new ResponseEntity<HttpStatus>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET)
