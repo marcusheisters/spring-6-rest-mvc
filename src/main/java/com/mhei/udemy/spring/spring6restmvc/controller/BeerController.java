@@ -4,6 +4,7 @@ import com.mhei.udemy.spring.spring6restmvc.model.Beer;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,12 @@ import java.util.UUID;
 @RequestMapping("/api/v1/beer")
 public class BeerController {
     private final BeerService beerService;
-
     @PostMapping
     public ResponseEntity<HttpStatus> handlePost(@RequestBody Beer beer) {
-        beerService.saveNewBeer(beer);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Beer savedBeer = beerService.saveNewBeer(beer);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("location", "api/v1/beer" + savedBeer.getId().toString());
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -34,10 +35,8 @@ public class BeerController {
     }
 
     @RequestMapping(value = "{beerId}", method = RequestMethod.GET)
-    public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
-
+   public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
         log.debug("Get beer by id was called - in Controller");
-
         return beerService.getBeerById(beerId);
 
     }
