@@ -21,6 +21,12 @@ import java.util.UUID;
 @RequestMapping("/api/v1/beer")
 public class BeerController {
     private final BeerService beerService;
+
+    @DeleteMapping("{beerId}")
+    public ResponseEntity deleteById(@PathVariable("beerId") UUID beerId){
+        beerService.deleteById(beerId);
+       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
     @PostMapping
     public ResponseEntity<HttpStatus> handlePost(@RequestBody Beer beer) {
         Beer savedBeer = beerService.saveNewBeer(beer);
