@@ -41,7 +41,6 @@ public class CustomerController {
 
     @PutMapping("{customerId}")
     public ResponseEntity<HttpStatus> handleUpdate(@PathVariable("customerId") UUID customerId, @RequestBody Customer customer) {
-        Customer updatedCustomer = customerService.updateCustomerById(customerId,customer);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "api/v1/customer" + customerId);
         return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
