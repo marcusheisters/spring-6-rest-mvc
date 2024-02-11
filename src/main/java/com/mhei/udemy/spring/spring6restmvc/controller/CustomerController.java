@@ -44,14 +44,10 @@ public class CustomerController {
     public ResponseEntity<HttpStatus> handleUpdate(@PathVariable("customerId") UUID customerId,
             @RequestBody Customer customer)
     {
+        customerService.updateCustomerById(customerId, customer);
+        getCustomerById(customerId);
         HttpHeaders headers = new HttpHeaders();
-        Customer existing = getCustomerById(customerId);
-        existing.setCustomerName(customer.getCustomerName());
-        existing.setVersion(existing.getVersion() + 1);
-        existing.setCreatedOn(LocalDateTime.now());
-        existing.setUpdatedOn(LocalDateTime.now());
-
-        headers.add("Location", "api/v1/customer" + customerId);
+        headers.add("location", "api/v1/customer" + customer.getId().toString());
 
         return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     }
