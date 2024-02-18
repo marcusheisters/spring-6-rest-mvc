@@ -3,6 +3,7 @@ package com.mhei.udemy.spring.spring6restmvc.controller;
 import com.mhei.udemy.spring.spring6restmvc.model.Beer;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.UUID;
  * @author marcusheisters
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/beer")
 public class BeerController {
