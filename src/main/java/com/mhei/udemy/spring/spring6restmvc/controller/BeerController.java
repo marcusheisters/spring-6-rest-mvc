@@ -2,7 +2,6 @@ package com.mhei.udemy.spring.spring6restmvc.controller;
 
 import com.mhei.udemy.spring.spring6restmvc.model.Beer;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -24,7 +23,7 @@ public class BeerController {
     private final BeerService beerService;
 
     @DeleteMapping("{beerId}")
-    public ResponseEntity<ResponseEntity> deleteById(@PathVariable("beerId") UUID beerId){
+    public ResponseEntity<ResponseEntity<HttpStatus>> deleteById(@PathVariable("beerId") UUID beerId){
         beerService.deleteById(beerId);
        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -49,9 +48,9 @@ public class BeerController {
     }
 
   @PatchMapping("{beerId}")
-    public ResponseEntity patchBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
+    public ResponseEntity<HttpStatus> patchBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
         beerService.patchBeerById(beerId, beer);
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
