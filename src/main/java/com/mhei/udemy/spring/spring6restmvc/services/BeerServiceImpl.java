@@ -100,7 +100,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public void patchBeerById(UUID beerId, Beer beer) {
+    public void updateBeerById(UUID beerId, Beer beer) {
         Beer existing = getBeerById(beerId);
 
         if (StringUtils.hasText(beer.getBeerName())) {
