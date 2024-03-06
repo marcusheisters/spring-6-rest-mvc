@@ -32,7 +32,7 @@ class CustomerControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    CustomerServiceImpl customerServiceImpl = new CustomerServiceImpl();
+    CustomerServiceImpl customerServiceImpl;
 
     @BeforeEach
     void setUp() {
