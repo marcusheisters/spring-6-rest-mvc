@@ -1,6 +1,5 @@
 package com.mhei.udemy.spring.spring6restmvc.controller;
 
-import com.mhei.udemy.spring.spring6restmvc.model.Beer;
 import com.mhei.udemy.spring.spring6restmvc.model.Customer;
 import com.mhei.udemy.spring.spring6restmvc.services.CustomerService;
 import lombok.AllArgsConstructor;
