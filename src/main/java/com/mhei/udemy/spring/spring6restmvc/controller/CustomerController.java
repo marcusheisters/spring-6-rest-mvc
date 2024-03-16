@@ -1,5 +1,6 @@
 package com.mhei.udemy.spring.spring6restmvc.controller;
 
+import com.mhei.udemy.spring.spring6restmvc.model.Beer;
 import com.mhei.udemy.spring.spring6restmvc.model.Customer;
 import com.mhei.udemy.spring.spring6restmvc.services.CustomerService;
 import lombok.AllArgsConstructor;
@@ -16,12 +17,13 @@ import java.util.UUID;
  */
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/customer")
 public class CustomerController {
+    private final String CUSTOMER_PATH = "/api/v1/customer";
+    private final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
 
     private final CustomerService customerService;
 
-    @PostMapping
+    @PostMapping(CUSTOMER_PATH)
     public ResponseEntity<HttpStatus> handlePost(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.saveCustomer(customer);
         HttpHeaders headers = new HttpHeaders();
@@ -29,17 +31,17 @@ public class CustomerController {
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping(value = CUSTOMER_PATH)
     public List<Customer> listCustomers() {
         return customerService.listCustomers();
     }
 
-    @RequestMapping(value = "{customerId}", method = RequestMethod.GET)
+    @GetMapping(value = CUSTOMER_PATH_ID)
     public Customer getCustomerById(@PathVariable("customerId") UUID customerId) {
         return customerService.getCustomerById(customerId);
     }
 
-    @PutMapping("{customerId}")
+    @PutMapping(CUSTOMER_PATH_ID)
     public ResponseEntity<HttpStatus> handleUpdate(@PathVariable("customerId") UUID customerId,
             @RequestBody Customer customer)
     {
@@ -51,7 +53,7 @@ public class CustomerController {
         return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("{customerId}")
+    @DeleteMapping(CUSTOMER_PATH_ID)
     public ResponseEntity<HttpStatus> deleteCustomerById(
             @PathVariable("customerId") UUID customerId)
     {
@@ -59,7 +61,7 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("{customerId}")
+    @PatchMapping(CUSTOMER_PATH_ID)
     public ResponseEntity<HttpStatus> patchCustomerById(@PathVariable("customerId") UUID customerId,
             @RequestBody Customer customer)
     {
