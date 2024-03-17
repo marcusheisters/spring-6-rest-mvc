@@ -19,8 +19,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 public class BeerController {
-    private final String BEER_PATH = "/api/v1/beer";
-    private final String BEER_PATH_ID = BEER_PATH + "/{beerId}" ;
+    public static final String BEER_PATH = "/api/v1/beer";
+    public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}" ;
     private final BeerService beerService;
 
     @DeleteMapping(BEER_PATH_ID)

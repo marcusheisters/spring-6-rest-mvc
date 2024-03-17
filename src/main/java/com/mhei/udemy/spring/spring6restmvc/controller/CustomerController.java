@@ -17,8 +17,8 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 public class CustomerController {
-    private final String CUSTOMER_PATH = "/api/v1/customer";
-    private final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
+    public static final String CUSTOMER_PATH = "/api/v1/customer";
+    public static final String CUSTOMER_PATH_ID = CUSTOMER_PATH + "/{customerId}";
 
     private final CustomerService customerService;
 
