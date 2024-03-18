@@ -126,7 +126,16 @@ class BeerControllerTest {
 
         verify(beerService).deleteById(uuidArgumentCaptor.capture());
         assertThat(beer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+    }
 
+ @Test
+ void getBeerByIdNotFound() throws Exception {
+
+        given(beerService.getBeerById(any(UUID.class)))
+                .willThrow(NotFoundException.class);
+
+        mockMvc.perform(get(BeerController.BEER_PATH_ID, UUID.randomUUID()))
+                .andExpect(status().isNotFound());
 
     }
 
