@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -37,7 +38,7 @@ public class CustomerController {
 
     @GetMapping(value = CUSTOMER_PATH_ID)
     public Customer getCustomerById(@PathVariable("customerId") UUID customerId) {
-        return customerService.getCustomerById(customerId);
+        return customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new);
     }
 
     @PutMapping(CUSTOMER_PATH_ID)
@@ -45,11 +46,8 @@ public class CustomerController {
             @RequestBody Customer customer)
     {
         customerService.updateCustomerById(customerId, customer);
-        getCustomerById(customerId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("location", "api/v1/customer" + customer.getId().toString());
 
-        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(CUSTOMER_PATH_ID)
