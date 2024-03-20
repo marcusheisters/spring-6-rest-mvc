@@ -1,6 +1,6 @@
 package com.mhei.udemy.spring.spring6restmvc.services;
 
-import com.mhei.udemy.spring.spring6restmvc.model.Customer;
+import com.mhei.udemy.spring.spring6restmvc.model.CustomerDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +13,11 @@ import java.util.UUID;
 @Service
 public interface CustomerService {
 
-    List<Customer> listCustomers();
-    Optional<Customer> getCustomerById(UUID id);
-    Customer saveCustomer(Customer customer);
-    void updateCustomerById(UUID customerId,Customer customer);
+    List<CustomerDTO> listCustomers();
+    Optional<CustomerDTO> getCustomerById(UUID id);
+    CustomerDTO saveCustomer(CustomerDTO customer);
+    void updateCustomerById(UUID customerId, CustomerDTO customer);
     void deleteCustomerById(UUID customerId);
-    void patchCustomerById(UUID customerId, Customer customer);
+    void patchCustomerById(UUID customerId, CustomerDTO customer);
 
 }

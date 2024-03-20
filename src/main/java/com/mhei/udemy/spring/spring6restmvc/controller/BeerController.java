@@ -1,6 +1,6 @@
 package com.mhei.udemy.spring.spring6restmvc.controller;
 
-import com.mhei.udemy.spring.spring6restmvc.model.Beer;
+import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,32 +29,32 @@ public class BeerController {
        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @PostMapping(BEER_PATH)
-    public ResponseEntity<HttpStatus> handlePost(@RequestBody Beer beer) {
+    public ResponseEntity<HttpStatus> handlePost(@RequestBody BeerDTO beer) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("location", BEER_PATH_ID);
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @GetMapping(value = BEER_PATH)
-    public List<Beer> listBeers() {
+    public List<BeerDTO> listBeers() {
         return beerService.listBeers();
     }
 
     @GetMapping(value = BEER_PATH_ID)
-   public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
+   public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId) {
         log.debug("Get beer by id was called - in Controller");
         return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
 
     }
 
   @PutMapping(BEER_PATH_ID)
-    public ResponseEntity<HttpStatus> updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
+    public ResponseEntity<HttpStatus> updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody BeerDTO beer) {
         beerService.updateBeerById(beerId, beer);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
     @PatchMapping(BEER_PATH_ID)
-    public ResponseEntity<HttpStatus> updateBeerPatchById(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
+    public ResponseEntity<HttpStatus> updateBeerPatchById(@PathVariable("beerId") UUID beerId, @RequestBody BeerDTO beer) {
         beerService.patchBeerById(beerId, beer);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
