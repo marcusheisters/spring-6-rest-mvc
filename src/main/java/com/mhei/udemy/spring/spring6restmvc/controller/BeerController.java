@@ -30,8 +30,9 @@ public class BeerController {
     }
     @PostMapping(BEER_PATH)
     public ResponseEntity<HttpStatus> handlePost(@RequestBody BeerDTO beer) {
+        BeerDTO savedBeer = beerService.saveNewBeer(beer);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("location", BEER_PATH_ID);
+        headers.add("location", BEER_PATH + "/" + savedBeer.getId().toString());
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
