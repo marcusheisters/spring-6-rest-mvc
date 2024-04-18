@@ -51,6 +51,8 @@ class BeerControllerIntegrationTest {
         assertThat(beers.size()).isEqualTo(0);
     }
 
+    @Transactional
+    @Rollback
     @Test
     void testSaveNewBeer() {
         BeerDTO beerDTO = BeerDTO.builder()
@@ -66,6 +68,18 @@ class BeerControllerIntegrationTest {
         UUID beerId = UUID.fromString(url[4]);
         Beer beer = beerRepository.findById(beerId).get();
         assertThat(beer).isNotNull();
+    }
+
+    @Test
+    void testUpdateExistingBeer() {
+        BeerDTO beerDTO = beerController.listBeers().get(0);
+        beerDTO.setBeerName("Updated Beer");
+
+        ResponseEntity<HttpStatus> responseEntity = beerController.updateBeerById(beerDTO.getId(), beerDTO);
+
+        Beer beer = beerRepository.findById(beerDTO.getId()).get();
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+        assertThat(beer.getBeerName()).isEqualTo("Updated Beer");
     }
 
 }
