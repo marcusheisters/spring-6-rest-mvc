@@ -82,4 +82,10 @@ class BeerControllerIntegrationTest {
         assertThat(beer.getBeerName()).isEqualTo("Updated Beer");
     }
 
+    @Test
+    void shouldThrowNotFoundException() {
+        Assertions.assertThrows(NotFoundException.class,
+                () -> beerController.updateBeerById(UUID.randomUUID(), BeerDTO.builder().build()));
+    }
+
 }
