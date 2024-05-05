@@ -19,7 +19,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDTO customer1 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
-                .customerName("Bill Edwards")
+                .name("Bill Edwards")
                 .version(1)
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
@@ -27,7 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDTO customer2 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
-                .customerName("Tiff Taylor")
+                .name("Tiff Taylor")
                 .version(1)
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
@@ -35,7 +35,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDTO customer3 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
-                .customerName("Parka Pete")
+                .name("Parka Pete")
                 .version(1)
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
@@ -63,7 +63,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .version(1)
-                .customerName(customer.getCustomerName())
+                .name(customer.getName())
                 .build();
 
         customerMap.put(customer.getId(), savedCustomer);
@@ -73,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void updateCustomerById(UUID customerId, CustomerDTO updatedCustomer) {
         CustomerDTO existing = customerMap.get(customerId);
-        existing.setCustomerName(updatedCustomer.getCustomerName());
+        existing.setName(updatedCustomer.getName());
         existing.setVersion(updatedCustomer.getVersion());
         existing.setUpdatedOn(LocalDateTime.now());
     }
@@ -86,8 +86,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void patchCustomerById(UUID customerId, CustomerDTO customer) {
         CustomerDTO existing = customerMap.get(customerId);
-        if (StringUtils.hasText(customer.getCustomerName())) {
-            existing.setCustomerName(customer.getCustomerName());
+        if (StringUtils.hasText(customer.getName())) {
+            existing.setName(customer.getName());
         }
     }
 }

@@ -5,6 +5,8 @@ import com.mhei.udemy.spring.spring6restmvc.repositories.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,18 @@ public class CustomerControllerIntegrationTest {
     @Test
     void testCustomerNotFound() {
         assertThrows(NotFoundException.class, () -> customerController.getCustomerById(UUID.randomUUID()));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void testSaveNewCustomer() {
+        CustomerDTO customerDTO = CustomerDTO.builder()
+                .name("New Customer")
+                .build();
+        ResponseEntity<HttpStatus> responseEntity = customerController.handlePost(customerDTO);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
     }
 
     @Transactional

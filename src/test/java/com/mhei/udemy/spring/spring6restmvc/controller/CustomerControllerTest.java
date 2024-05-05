@@ -68,7 +68,7 @@ class CustomerControllerTest {
 
        verify(customerService).patchCustomerById(uuidArgumentCaptor.capture(), customerArgumentCaptor.capture());
         assertThat(customer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
-        assertThat(customerMap.get("customerName")).isEqualTo(customerArgumentCaptor.getValue().getCustomerName());
+        assertThat(customerMap.get("customerName")).isEqualTo(customerArgumentCaptor.getValue().getName());
     }
 
     @Test
@@ -95,7 +95,7 @@ class CustomerControllerTest {
         given(customerService.getCustomerById(customer.getId())).willReturn(Optional.of(customer));
         mockMvc.perform(get(CustomerController.CUSTOMER_PATH_ID, customer.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.customerName", is(customer.getCustomerName())));
+                .andExpect(jsonPath("$.customerName", is(customer.getName())));
     }
     @Test
     void testListCustomers() throws Exception {
