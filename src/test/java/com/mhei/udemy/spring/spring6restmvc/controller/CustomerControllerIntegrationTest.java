@@ -1,5 +1,6 @@
 package com.mhei.udemy.spring.spring6restmvc.controller;
 
+import com.mhei.udemy.spring.spring6restmvc.entities.Customer;
 import com.mhei.udemy.spring.spring6restmvc.model.CustomerDTO;
 import com.mhei.udemy.spring.spring6restmvc.repositories.CustomerRepository;
 import org.junit.jupiter.api.Test;
@@ -52,6 +53,11 @@ public class CustomerControllerIntegrationTest {
         ResponseEntity<HttpStatus> responseEntity = customerController.handlePost(customerDTO);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
+
+        String[] url = responseEntity.getHeaders().getLocation().toString().split("/");
+        UUID customerId = UUID.fromString(url[4]);
+        Customer customer = customerRepository.findById(customerId).get();
+        assertThat(customer).isNotNull();
     }
 
     @Transactional
