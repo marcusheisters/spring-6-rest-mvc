@@ -1,12 +1,15 @@
 package com.mhei.udemy.spring.spring6restmvc.controller;
 
+import com.mhei.udemy.spring.spring6restmvc.entities.Beer;
 import com.mhei.udemy.spring.spring6restmvc.entities.Customer;
+import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
 import com.mhei.udemy.spring.spring6restmvc.model.CustomerDTO;
 import com.mhei.udemy.spring.spring6restmvc.repositories.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +63,20 @@ public class CustomerControllerIntegrationTest {
         assertThat(customer).isNotNull();
     }
 
+    @Transactional
+    @Rollback
+    @Test
+    void testUpdateExistingcustomer() {
+        CustomerDTO customerDTO = customerController.listCustomers().get(0);
+        customerDTO.setName("Updated customer");
+
+        ResponseEntity<HttpStatus> responseEntity =
+                customerController.handleUpdate(customerDTO.getId(), customerDTO);
+
+        Customer customer = customerRepository.findById(customerDTO.getId()).get();
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+        assertThat(customer.getCustomerName()).isEqualTo("Updated customer");
+    }
     @Transactional
     @Rollback
     @Test
