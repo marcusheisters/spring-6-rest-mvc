@@ -95,11 +95,12 @@ public class CustomerControllerIntegrationTest {
     }
 
 
-//    @Test
-//    void deleteByIdNotFound() {
-//        Assertions.assertThrows(NotFoundException.class,
-//                () -> beerController.deleteById(UUID.randomUUID()));
-//    }
+    @Test
+    void deleteByIdNotFound() {
+        assertThrows(NotFoundException.class,
+                () -> customerController.deleteById(UUID.randomUUID()));
+    }
+
     @Transactional
     @Rollback
     @Test
