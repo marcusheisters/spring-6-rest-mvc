@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerServiceImpl;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -118,6 +119,20 @@ class BeerControllerTest {
                 .andExpect(jsonPath(("$.id"), is(beer.getId().toString())))
                 .andExpect(jsonPath(("$.beerName"), is(beer.getBeerName())));
 
+    }
+
+    @Test
+    @SneakyThrows
+    void createBeerWithNullNameShouldFail() {
+        BeerDTO beerDTO = BeerDTO.builder().build();
+
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
+
+                mockMvc.perform(post(BeerController.BEER_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                        .andExpect(status().isBadRequest());
     }
 
     @Test
