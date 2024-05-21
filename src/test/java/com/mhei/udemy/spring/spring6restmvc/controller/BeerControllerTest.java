@@ -2,6 +2,7 @@ package com.mhei.udemy.spring.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
+import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerServiceImpl;
 import lombok.SneakyThrows;
@@ -14,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -125,7 +125,7 @@ class BeerControllerTest {
     @Test
     @SneakyThrows
     void createBeerWithNullNameShouldFail() {
-        BeerDTO beerDTO = BeerDTO.builder().build();
+        BeerDTO beerDTO = BeerDTO.builder().beerStyle(BeerStyle.CRAFT).upc("123555").build();
 
         given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
 
@@ -138,6 +138,20 @@ class BeerControllerTest {
                 .andReturn();
     }
 
+    @Test
+    @SneakyThrows
+    void updateBeerWithEmptyNameShouldFail() {
+        BeerDTO beerDTO = beerServiceImpl.listBeers().get(0);
+        beerDTO.setBeerName("");
+        given(beerService.updateBeerById(any(), any(BeerDTO.class))).willReturn(Optional.ofNullable(beerServiceImpl.listBeers().get(0)));
+
+        mockMvc.perform(put(BeerController.BEER_PATH_ID, beerDTO.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+    }
     @Test
     void testDeleteBeet() throws Exception {
         BeerDTO beer = beerServiceImpl.listBeers().get(0);
