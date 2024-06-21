@@ -21,16 +21,17 @@ import java.util.UUID;
 @RestController
 public class BeerController {
     public static final String BEER_PATH = "/api/v1/beer";
-    public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}" ;
+    public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
     private final BeerService beerService;
 
     @DeleteMapping(BEER_PATH_ID)
-    public ResponseEntity<HttpStatus> deleteById(@PathVariable("beerId") UUID beerId){
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable("beerId") UUID beerId) {
         if (!beerService.deleteById(beerId)) {
             throw new NotFoundException();
         }
-       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     @PostMapping(BEER_PATH)
     public ResponseEntity<HttpStatus> handlePost(@Validated @RequestBody BeerDTO beer) {
         BeerDTO savedBeer = beerService.saveNewBeer(beer);
@@ -45,25 +46,25 @@ public class BeerController {
     }
 
     @GetMapping(value = BEER_PATH_ID)
-   public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId) {
+    public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId) {
         log.debug("Get beer by id was called - in Controller");
         return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
 
     }
 
-  @PutMapping(BEER_PATH_ID)
+    @PutMapping(BEER_PATH_ID)
     public ResponseEntity<HttpStatus> updateBeerById(@PathVariable("beerId") UUID beerId,
                                                      @Validated @RequestBody BeerDTO beer) {
         if (beerService.updateBeerById(beerId, beer).isEmpty()) {
             throw new NotFoundException();
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+    }
+
     @PatchMapping(BEER_PATH_ID)
     public ResponseEntity<HttpStatus> updateBeerPatchById(@PathVariable("beerId") UUID beerId,
                                                           @RequestBody BeerDTO beer) {
         beerService.patchBeerById(beerId, beer);
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

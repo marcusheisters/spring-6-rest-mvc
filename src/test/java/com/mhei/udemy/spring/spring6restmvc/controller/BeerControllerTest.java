@@ -6,7 +6,6 @@ import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerServiceImpl;
 import lombok.SneakyThrows;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -16,8 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.math.BigDecimal;
@@ -112,7 +109,6 @@ class BeerControllerTest {
                         .andExpect(status().isNoContent());
 
         verify(beerService).updateBeerById(any(UUID.class), any(BeerDTO.class));
-
     }
 
     @Test
@@ -193,13 +189,65 @@ class BeerControllerTest {
 
  @Test
  void getBeerByIdNotFound() throws Exception {
-
         given(beerService.getBeerById(any(UUID.class)))
                 .willReturn(Optional.empty());
-
         mockMvc.perform(get(BeerController.BEER_PATH_ID, UUID.randomUUID()))
                 .andExpect(status().isNotFound());
-
     }
 
+    @Test
+    @SneakyThrows
+    void updateBeerWithoutNameShouldFail() {
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
+        beer.setBeerName(null);
+
+        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
+
+    @Test
+    @SneakyThrows
+    void updateBeerWithoutStyleShouldFail() {
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
+        beer.setBeerStyle(null);
+
+        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
+
+    @Test
+    @SneakyThrows
+    void updateBeerWithoutUpcShouldFail() {
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
+        beer.setUpc(null);
+
+        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
+
+    @Test
+    @SneakyThrows
+    void updateBeerWithoutPriceShouldFail() {
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
+        beer.setPrice(null);
+
+        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
 }
