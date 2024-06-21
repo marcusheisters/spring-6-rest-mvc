@@ -2,7 +2,6 @@ package com.mhei.udemy.spring.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
-import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerServiceImpl;
 import lombok.SneakyThrows;
@@ -15,9 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.util.pattern.PathPatternParser;
-
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -52,9 +48,6 @@ class BeerControllerTest {
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     BeerServiceImpl beerServiceImpl;
-    @Autowired
-    private PathPatternParser mvcPatternParser;
-
 
     @BeforeEach
     void setUp() {
@@ -127,9 +120,9 @@ class BeerControllerTest {
 
     @Test
     @SneakyThrows
-    void createBeerWithNullNameShouldFail() {
+    void createBeerWithoutRequiredPropsShouldShouldFail() {
         BeerDTO beerDTO =
-                BeerDTO.builder().beerStyle(BeerStyle.CRAFT).upc("123555").price(BigDecimal.ONE).build();
+                BeerDTO.builder().build();
 
         given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
 
@@ -138,41 +131,7 @@ class BeerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(1)));
-    }
-
-    @Test
-    @SneakyThrows
-    void createBeerWithoutStyleShouldFail() {
-        BeerDTO beerDTO =
-                BeerDTO.builder().beerName("tasty").upc("123555").price(BigDecimal.ONE).build();
-
-        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
-
-        mockMvc.perform(post(BeerController.BEER_PATH)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beerDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(1)))
-                .andReturn();
-    }
-
-    @Test
-    @SneakyThrows
-    void createBeerWithoutPriceShouldFail() {
-        BeerDTO beerDTO =
-                BeerDTO.builder().beerName("tasty").beerStyle(BeerStyle.CRAFT).upc("123555").build();
-
-        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
-
-        mockMvc.perform(post(BeerController.BEER_PATH)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beerDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(1)))
-                .andReturn();
+                .andExpect(jsonPath("$.length()", is(4)));
     }
 
     @Test
@@ -197,36 +156,11 @@ class BeerControllerTest {
 
     @Test
     @SneakyThrows
-    void updateBeerWithoutNameShouldFail() {
+    void updateBeerWithoutRequiredPropsShouldFail() {
         BeerDTO beer = beerServiceImpl.listBeers().get(0);
         beer.setBeerName(null);
-
-        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beer)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(1)));
-    }
-
-    @Test
-    @SneakyThrows
-    void updateBeerWithoutStyleShouldFail() {
-        BeerDTO beer = beerServiceImpl.listBeers().get(0);
         beer.setBeerStyle(null);
-
-        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beer)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(1)));
-    }
-
-    @Test
-    @SneakyThrows
-    void updateBeerWithoutUpcShouldFail() {
-        BeerDTO beer = beerServiceImpl.listBeers().get(0);
+        beer.setPrice(null);
         beer.setUpc(null);
 
         mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
@@ -234,20 +168,7 @@ class BeerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(1)));
+                .andExpect(jsonPath("$.length()", is(4)));
     }
 
-    @Test
-    @SneakyThrows
-    void updateBeerWithoutPriceShouldFail() {
-        BeerDTO beer = beerServiceImpl.listBeers().get(0);
-        beer.setPrice(null);
-
-        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beer)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(1)));
-    }
 }
