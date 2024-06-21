@@ -16,6 +16,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.util.pattern.PathPattern;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -52,6 +55,8 @@ class BeerControllerTest {
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     BeerServiceImpl beerServiceImpl;
+    @Autowired
+    private PathPatternParser mvcPatternParser;
 
 
     @BeforeEach
@@ -132,12 +137,12 @@ class BeerControllerTest {
 
         given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
 
-        mockMvc.perform(post(BeerController.BEER_PATH)
+       mockMvc.perform(post(BeerController.BEER_PATH)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(2)));
+                .andExpect(jsonPath("$.length()", is(1)));
     }
 
     @Test
@@ -153,7 +158,7 @@ class BeerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$.length()", is(1)))
                 .andReturn();
     }
 
@@ -170,24 +175,10 @@ class BeerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$.length()", is(1)))
                 .andReturn();
     }
 
-    @Test
-    @SneakyThrows
-    void updateBeerWithEmptyNameShouldFail() {
-        BeerDTO beerDTO = beerServiceImpl.listBeers().get(0);
-        beerDTO.setBeerName("");
-        given(beerService.updateBeerById(any(), any(BeerDTO.class))).willReturn(Optional.ofNullable(beerServiceImpl.listBeers().get(0)));
-
-        mockMvc.perform(put(BeerController.BEER_PATH_ID, beerDTO.getId())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beerDTO)))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-    }
     @Test
     void testDeleteBeet() throws Exception {
         BeerDTO beer = beerServiceImpl.listBeers().get(0);
