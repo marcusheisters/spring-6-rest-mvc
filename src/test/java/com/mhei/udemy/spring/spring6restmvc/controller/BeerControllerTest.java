@@ -6,6 +6,7 @@ import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerServiceImpl;
 import lombok.SneakyThrows;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -125,7 +127,41 @@ class BeerControllerTest {
     @Test
     @SneakyThrows
     void createBeerWithNullNameShouldFail() {
-        BeerDTO beerDTO = BeerDTO.builder().beerStyle(BeerStyle.CRAFT).upc("123555").build();
+        BeerDTO beerDTO =
+                BeerDTO.builder().beerStyle(BeerStyle.CRAFT).upc("123555").price(BigDecimal.ONE).build();
+
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
+
+        mockMvc.perform(post(BeerController.BEER_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(2)));
+    }
+
+    @Test
+    @SneakyThrows
+    void createBeerWithoutStyleShouldFail() {
+        BeerDTO beerDTO =
+                BeerDTO.builder().beerName("tasty").upc("123555").price(BigDecimal.ONE).build();
+
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
+
+        mockMvc.perform(post(BeerController.BEER_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andReturn();
+    }
+
+    @Test
+    @SneakyThrows
+    void createBeerWithoutPriceShouldFail() {
+        BeerDTO beerDTO =
+                BeerDTO.builder().beerName("tasty").beerStyle(BeerStyle.CRAFT).upc("123555").build();
 
         given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(0));
 
