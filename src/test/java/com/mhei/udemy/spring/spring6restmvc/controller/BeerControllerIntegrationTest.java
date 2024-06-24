@@ -96,7 +96,6 @@ class BeerControllerIntegrationTest {
     @Test
     void deleteByIdFound() {
         Beer beer = beerRepository.findAll().get(0);
-
         ResponseEntity<HttpStatus> responseEntityResponseEntity = beerController.deleteById(beer.getId());
         assertThat(responseEntityResponseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
 

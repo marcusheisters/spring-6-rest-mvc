@@ -53,6 +53,10 @@ public class CustomerController {
     public ResponseEntity<HttpStatus> deleteById(
             @PathVariable("customerId") UUID customerId)
     {
+
+        if (!customerService.deleteCustomerById(customerId)) {
+            throw new NotFoundException();
+        }
         customerService.deleteCustomerById(customerId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
