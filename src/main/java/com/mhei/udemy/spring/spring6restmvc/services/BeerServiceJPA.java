@@ -1,11 +1,14 @@
 package com.mhei.udemy.spring.spring6restmvc.services;
 
+import com.mhei.udemy.spring.spring6restmvc.entities.Beer;
 import com.mhei.udemy.spring.spring6restmvc.mappers.BeerMapper;
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
 import com.mhei.udemy.spring.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,7 +64,34 @@ public class BeerServiceJPA implements BeerService {
 
 
     @Override
-    public void patchBeerById(UUID beerId, BeerDTO beer) {
+    public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beer) {
+        Optional<Beer> foundBeer = beerRepository.findById(beerId);
+        if (foundBeer.isEmpty()) {
+            return Optional.empty();
+        }
 
+        Beer existing = foundBeer.get();
+
+        if (StringUtils.hasText(beer.getBeerName())) {
+            existing.setBeerName(beer.getBeerName());
+        }
+
+        if (beer.getBeerStyle() != null) {
+            existing.setBeerStyle(beer.getBeerStyle());
+        }
+
+        if (beer.getPrice() != null) {
+            existing.setPrice(beer.getPrice());
+        }
+
+        if (beer.getQuantityOnHand() != null) {
+            existing.setQuantityOnHand(beer.getQuantityOnHand());
+        }
+
+        if (StringUtils.hasText(beer.getUpc())) {
+            existing.setUpc(beer.getUpc());
+        }
+        beerRepository.save(existing);
+        return Optional.of(beerMapper.beerToBeerDto(existing));
     }
 }
