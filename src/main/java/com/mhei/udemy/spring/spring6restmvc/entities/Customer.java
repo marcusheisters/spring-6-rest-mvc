@@ -27,7 +27,12 @@ public class Customer {
     private UUID id;
     @Version
     private Integer version;
+
     private String customerName;
+
+    @Column(length = 255)
+    private String email;
+
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;
 
