@@ -5,8 +5,8 @@
 
     create table beer (
                           id varchar(36) not null,
-                          beer_name varchar(50),
-                          beer_style tinyint check (beer_style between 0 and 5),
+                          beer_name varchar(100),
+                          beer_style smallint not null,
                           created_on datetime(6),
                           price decimal(38,2),
                           quantity_on_hand integer,

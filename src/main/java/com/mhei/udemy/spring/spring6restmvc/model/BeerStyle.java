@@ -4,10 +4,5 @@ package com.mhei.udemy.spring.spring6restmvc.model;
  * @author marcusheisters
  */
 public enum BeerStyle {
-    LAGER,
-    PILSENER,
-    IPA,
-    CRAFT,
-    PALE_ALE, YEAST
-
+    LAGER, PILSNER, STOUT, GOSE, PORTER, ALE, WHEAT, IPA, PALE_ALE, SAISON
 }

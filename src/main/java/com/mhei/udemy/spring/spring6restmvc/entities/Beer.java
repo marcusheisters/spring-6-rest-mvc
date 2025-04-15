@@ -35,11 +35,12 @@ public class Beer {
 
     @NotNull
     @NotBlank
-    @Size(max = 50)
-    @Column(length = 50)
+    @Size(max = 100)
+    @Column(length = 100)
     private String beerName;
 
     @NotNull
+    @JdbcTypeCode(value = SqlTypes.SMALLINT)
     private BeerStyle beerStyle;
 
     @NotNull
