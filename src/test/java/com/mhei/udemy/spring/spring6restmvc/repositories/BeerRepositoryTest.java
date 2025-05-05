@@ -25,7 +25,7 @@ class BeerRepositoryTest {
     void saveBeerWithTooLongBeerNameShouldThrowException() {
         Assertions.assertThrows(ConstraintViolationException.class, () -> {
             // Given
-            String beerName = RandomString.make(55);
+            String beerName = RandomString.make(120);
         Beer beer = Beer.builder()
                 .beerName(beerName)
                 .beerStyle(BeerStyle.IPA)
