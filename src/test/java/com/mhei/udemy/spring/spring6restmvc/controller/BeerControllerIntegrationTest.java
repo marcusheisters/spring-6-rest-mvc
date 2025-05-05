@@ -49,11 +49,11 @@ class BeerControllerIntegrationTest {
     }
 
     @Test
-    void testPatchBeerById() throws Exception {
+    void testPatchBeerBadName() throws Exception {
         Beer beer = beerRepository.findAll().get(0);
 
         Map<String, Object> beerMap = new HashMap<>();
-        beerMap.put("beerName", RandomString.make(55));
+        beerMap.put("beerName", RandomString.make(120));
 
         MvcResult mvcResult = mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -62,14 +62,12 @@ class BeerControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.length()", is(1)))
                 .andReturn();
-
-        System.out.println(mvcResult.getResponse().getContentAsString());
     }
 
     @Test
     void testListBeers() {
         List<BeerDTO> beers = beerController.listBeers();
-        assertThat(beers.size()).isEqualTo(3);
+        assertThat(beers.size()).isEqualTo(2410);
     }
 
     @Test
