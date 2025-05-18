@@ -3,7 +3,6 @@ package com.mhei.udemy.spring.spring6restmvc.controller;
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
