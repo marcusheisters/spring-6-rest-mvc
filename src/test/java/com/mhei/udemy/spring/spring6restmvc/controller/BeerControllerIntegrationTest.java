@@ -72,6 +72,15 @@ class BeerControllerIntegrationTest {
     }
 
     @Test
+    @SneakyThrows
+    void testListBeersByName() {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                .queryParam("beerName", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(336)));
+    }
+
+    @Test
     void testGetBeerById() {
         BeerDTO beer = beerController.getBeerById(beerRepository.findAll().get(0).getId());
         assertThat(beer).isNotNull();
@@ -137,7 +146,7 @@ class BeerControllerIntegrationTest {
         mockMvc.perform(get(BeerController.BEER_PATH)
                 .queryParam("beerName", "IPA"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(100)));
+                .andExpect(jsonPath("$.size()", is(336)));
     }
 
     @Transactional
