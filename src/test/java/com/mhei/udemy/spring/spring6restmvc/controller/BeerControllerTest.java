@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -68,7 +69,7 @@ class BeerControllerTest {
                 .andExpect(status().isNoContent());
         verify(beerService).patchBeerById(uuidArgumentCaptor.capture(), beerArgumentCaptor.capture());
         assertThat(beer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
-        assertThat(beerMap.get("beerName")).isEqualTo(beerArgumentCaptor.getValue().getBeerName());
+        assertThat(beerMap).containsEntry("beerName", beerArgumentCaptor.getValue().getBeerName());
 
     }
     @Test
@@ -171,4 +172,14 @@ class BeerControllerTest {
                 .andExpect(jsonPath("$.length()", is(6)));
     }
 
-}
+    @Test
+    @SneakyThrows
+    void testListBeers() {
+        given(beerService.listBeers()).willReturn(beerServiceImpl.listBeers());
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(3)));
+
+    }}

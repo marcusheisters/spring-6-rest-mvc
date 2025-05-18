@@ -2,6 +2,8 @@ package com.mhei.udemy.spring.spring6restmvc.controller;
 
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
+import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -22,11 +24,12 @@ import java.util.UUID;
 public class BeerController {
     public static final String BEER_PATH = "/api/v1/beer";
     public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
-    private final BeerService beerService;
+    @NotNull
+    private final  BeerService beerService;
 
     @DeleteMapping(BEER_PATH_ID)
     public ResponseEntity<HttpStatus> deleteById(@PathVariable("beerId") UUID beerId) {
-        if (!beerService.deleteById(beerId)) {
+        if (Boolean.FALSE.equals(beerService.deleteById(beerId))) {
             throw new NotFoundException();
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -41,7 +44,7 @@ public class BeerController {
     }
 
     @GetMapping(value = BEER_PATH)
-    public List<BeerDTO> listBeers() {
+    public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName) {
         return beerService.listBeers();
     }
 

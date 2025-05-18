@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mhei.udemy.spring.spring6restmvc.entities.Beer;
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
 import com.mhei.udemy.spring.spring6restmvc.repositories.BeerRepository;
+import lombok.SneakyThrows;
 import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -25,6 +25,7 @@ import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,7 +56,7 @@ class BeerControllerIntegrationTest {
         Map<String, Object> beerMap = new HashMap<>();
         beerMap.put("beerName", RandomString.make(120));
 
-        MvcResult mvcResult = mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
+        mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
@@ -66,8 +67,8 @@ class BeerControllerIntegrationTest {
 
     @Test
     void testListBeers() {
-        List<BeerDTO> beers = beerController.listBeers();
-        assertThat(beers.size()).isEqualTo(2410);
+        List<BeerDTO> beers = beerController.listBeers(null);
+        assertThat(beers).hasSize(2410);
     }
 
     @Test
@@ -86,8 +87,8 @@ class BeerControllerIntegrationTest {
     @Test
     void testEmptyList() {
         beerRepository.deleteAll();
-        List<BeerDTO> beers = beerController.listBeers();
-        assertThat(beers.size()).isEqualTo(0);
+        List<BeerDTO> beers = beerController.listBeers(null);
+        assertThat(beers).isEmpty();
     }
 
     @Transactional
@@ -113,7 +114,7 @@ class BeerControllerIntegrationTest {
     @Rollback
     @Test
     void testUpdateExistingBeer() {
-        BeerDTO beerDTO = beerController.listBeers().get(0);
+        BeerDTO beerDTO = beerController.listBeers("").get(0);
         beerDTO.setBeerName("Updated Beer");
 
         ResponseEntity<HttpStatus> responseEntity = beerController.updateBeerById(beerDTO.getId(), beerDTO);
@@ -127,6 +128,16 @@ class BeerControllerIntegrationTest {
     void shouldThrowNotFoundException() {
         Assertions.assertThrows(NotFoundException.class,
                 () -> beerController.updateBeerById(UUID.randomUUID(), BeerDTO.builder().build()));
+    }
+
+
+    @Test
+    @SneakyThrows
+    void useQueryParametersShouldReturnCorrectAmountOfBeers() {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                .queryParam("beerName", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(100)));
     }
 
     @Transactional
