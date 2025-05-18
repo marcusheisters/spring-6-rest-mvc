@@ -135,6 +135,6 @@ public class BeerServiceImpl implements BeerService {
         if (StringUtils.hasText(beer.getUpc())) {
             existing.setUpc(beer.getUpc());
         }
-        return null;
+        return Optional.empty();
     }
 }
