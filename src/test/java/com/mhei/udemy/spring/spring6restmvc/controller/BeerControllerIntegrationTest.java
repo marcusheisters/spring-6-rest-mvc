@@ -3,6 +3,7 @@ package com.mhei.udemy.spring.spring6restmvc.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mhei.udemy.spring.spring6restmvc.entities.Beer;
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
+import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.repositories.BeerRepository;
 import lombok.SneakyThrows;
 import net.bytebuddy.utility.RandomString;
@@ -67,7 +68,7 @@ class BeerControllerIntegrationTest {
 
     @Test
     void testListBeers() {
-        List<BeerDTO> beers = beerController.listBeers(null);
+        List<BeerDTO> beers = beerController.listBeers(null, null);
         assertThat(beers).hasSize(2410);
     }
 
@@ -78,6 +79,15 @@ class BeerControllerIntegrationTest {
                 .queryParam("beerName", "IPA"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(336)));
+    }
+
+    @Test
+    @SneakyThrows
+    void testListBeersByStyle() {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                        .queryParam("beerStyle", BeerStyle.PILSNER.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(1280)));
     }
 
     @Test
@@ -96,7 +106,7 @@ class BeerControllerIntegrationTest {
     @Test
     void testEmptyList() {
         beerRepository.deleteAll();
-        List<BeerDTO> beers = beerController.listBeers(null);
+        List<BeerDTO> beers = beerController.listBeers(null, null);
         assertThat(beers).isEmpty();
     }
 
@@ -123,7 +133,7 @@ class BeerControllerIntegrationTest {
     @Rollback
     @Test
     void testUpdateExistingBeer() {
-        BeerDTO beerDTO = beerController.listBeers("").get(0);
+        BeerDTO beerDTO = beerController.listBeers(null,null).get(0);
         beerDTO.setBeerName("Updated Beer");
 
         ResponseEntity<HttpStatus> responseEntity = beerController.updateBeerById(beerDTO.getId(), beerDTO);

@@ -1,6 +1,7 @@
 package com.mhei.udemy.spring.spring6restmvc.services;
 
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
+import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Service
 public interface BeerService {
 
-    List<BeerDTO> listBeers(String beerName);
+    List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle);
 
     Optional<BeerDTO> getBeerById(UUID id);
 

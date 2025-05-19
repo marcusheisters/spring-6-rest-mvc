@@ -1,6 +1,7 @@
 package com.mhei.udemy.spring.spring6restmvc.controller;
 
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
+import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.services.BeerService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +44,10 @@ public class BeerController {
     }
 
     @GetMapping(value = BEER_PATH)
-    public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName) {
-        return beerService.listBeers(beerName);
+    public List<BeerDTO> listBeers(
+            @RequestParam(required = false) String beerName,
+            @RequestParam(required = false) BeerStyle beerStyle) {
+        return beerService.listBeers(beerName, beerStyle);
     }
 
     @GetMapping(value = BEER_PATH_ID)

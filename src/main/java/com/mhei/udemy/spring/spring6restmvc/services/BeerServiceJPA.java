@@ -3,6 +3,7 @@ package com.mhei.udemy.spring.spring6restmvc.services;
 import com.mhei.udemy.spring.spring6restmvc.entities.Beer;
 import com.mhei.udemy.spring.spring6restmvc.mappers.BeerMapper;
 import com.mhei.udemy.spring.spring6restmvc.model.BeerDTO;
+import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -21,9 +22,15 @@ public class BeerServiceJPA implements BeerService {
     private final BeerMapper beerMapper;
 
     @Override
-    public List<BeerDTO> listBeers(String beerName) {
+    public List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle) {
         if (StringUtils.hasText(beerName)) {
             return getBeersByName(beerName)
+                    .stream()
+                    .map(beerMapper::beerToBeerDto)
+                    .toList();
+        }
+        else if (beerStyle != null) {
+            return getBeersByStyle(beerStyle)
                     .stream()
                     .map(beerMapper::beerToBeerDto)
                     .toList();
@@ -37,6 +44,10 @@ public class BeerServiceJPA implements BeerService {
 
 private List<Beer> getBeersByName(String beerName) {
     return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
+}
+
+private List<Beer> getBeersByStyle(BeerStyle beerStyle) {
+    return beerRepository.findAllByBeerStyle(beerStyle);
 }
 
 @Override
