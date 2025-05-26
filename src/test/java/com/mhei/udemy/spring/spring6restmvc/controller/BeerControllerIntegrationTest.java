@@ -7,6 +7,7 @@ import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.repositories.BeerRepository;
 import lombok.SneakyThrows;
 import net.bytebuddy.utility.RandomString;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ class BeerControllerIntegrationTest {
 
     @Test
     void testListBeers() {
-        List<BeerDTO> beers = beerController.listBeers(null, null);
+        List<BeerDTO> beers = beerController.listBeers(null, null, false);
         assertThat(beers).hasSize(2410);
     }
 
@@ -91,6 +92,15 @@ class BeerControllerIntegrationTest {
     }
 
     @Test
+    @SneakyThrows
+    void testListBeersByNameAndStyle() {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                .queryParam("beerName", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(336)));
+    }
+    @Test
     void testGetBeerById() {
         BeerDTO beer = beerController.getBeerById(beerRepository.findAll().get(0).getId());
         assertThat(beer).isNotNull();
@@ -106,7 +116,7 @@ class BeerControllerIntegrationTest {
     @Test
     void testEmptyList() {
         beerRepository.deleteAll();
-        List<BeerDTO> beers = beerController.listBeers(null, null);
+        List<BeerDTO> beers = beerController.listBeers(null, null, false);
         assertThat(beers).isEmpty();
     }
 
@@ -133,7 +143,7 @@ class BeerControllerIntegrationTest {
     @Rollback
     @Test
     void testUpdateExistingBeer() {
-        BeerDTO beerDTO = beerController.listBeers(null,null).get(0);
+        BeerDTO beerDTO = beerController.listBeers(null,null, false).get(0);
         beerDTO.setBeerName("Updated Beer");
 
         ResponseEntity<HttpStatus> responseEntity = beerController.updateBeerById(beerDTO.getId(), beerDTO);
@@ -176,6 +186,21 @@ class BeerControllerIntegrationTest {
     void deleteByIdNotFound() {
         Assertions.assertThrows(NotFoundException.class,
                 () -> beerController.deleteById(UUID.randomUUID()));
+    }
+
+    @Test
+    void testListBeersByStyleAndNameShowInventoryTruePage2() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("beerName", "IPA")
+                        .queryParam("showInventory", "true")
+                        .queryParam("pageNumber", "2")
+                        .queryParam("pageSize", "50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(50)))
+                .andExpect(jsonPath("$[0].beerName", is("Sierra Nevada Torpedo Extra IPA")))
+                .andExpect(jsonPath("$[0].quantityOnHand").value(IsNull.notNullValue()));
+
     }
 
 }
