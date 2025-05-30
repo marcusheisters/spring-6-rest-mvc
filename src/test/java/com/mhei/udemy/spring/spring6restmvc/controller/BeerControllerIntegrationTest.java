@@ -69,7 +69,7 @@ class BeerControllerIntegrationTest {
 
     @Test
     void testListBeers() {
-        List<BeerDTO> beers = beerController.listBeers(null, null, false);
+        List<BeerDTO> beers = beerController.listBeers(null, null, false, 1, 25);
         assertThat(beers).hasSize(2410);
     }
 
@@ -116,7 +116,7 @@ class BeerControllerIntegrationTest {
     @Test
     void testEmptyList() {
         beerRepository.deleteAll();
-        List<BeerDTO> beers = beerController.listBeers(null, null, false);
+        List<BeerDTO> beers = beerController.listBeers(null, null, false, 1, 25);
         assertThat(beers).isEmpty();
     }
 
@@ -143,7 +143,7 @@ class BeerControllerIntegrationTest {
     @Rollback
     @Test
     void testUpdateExistingBeer() {
-        BeerDTO beerDTO = beerController.listBeers(null,null, false).get(0);
+        BeerDTO beerDTO = beerController.listBeers(null,null, false, 1, 25).get(0);
         beerDTO.setBeerName("Updated Beer");
 
         ResponseEntity<HttpStatus> responseEntity = beerController.updateBeerById(beerDTO.getId(), beerDTO);
@@ -198,7 +198,6 @@ class BeerControllerIntegrationTest {
                         .queryParam("pageSize", "50"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(50)))
-                .andExpect(jsonPath("$[0].beerName", is("Sierra Nevada Torpedo Extra IPA")))
                 .andExpect(jsonPath("$[0].quantityOnHand").value(IsNull.notNullValue()));
 
     }

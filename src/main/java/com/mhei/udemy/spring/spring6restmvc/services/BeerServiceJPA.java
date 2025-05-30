@@ -7,6 +7,7 @@ import com.mhei.udemy.spring.spring6restmvc.model.BeerStyle;
 import com.mhei.udemy.spring.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -15,17 +16,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 @Primary
 @RequiredArgsConstructor
 public class BeerServiceJPA implements BeerService {
+
+    private static final int DEFAULT_PAGE_NUMBER = 0;
+    private static final int DEFAULT_PAGE_SIZE = 25;
+
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
 
     @Override
-    public List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, boolean showInventoryOnHand) {
+    public List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, boolean showInventoryOnHand, Integer pageNumber, Integer pageSize) {
+
+        PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
 
         List<Beer> beerList = new ArrayList<>();
 
@@ -50,6 +55,18 @@ public class BeerServiceJPA implements BeerService {
                 .map(beerMapper::beerToBeerDto)
                 .toList();
     }
+
+public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+
+        int queryPageNumber = pageNumber != null ? pageNumber - 1 : DEFAULT_PAGE_NUMBER;
+        int queryPageSize = pageSize != null ? pageSize : DEFAULT_PAGE_SIZE;
+
+    if (pageSize != null && pageSize > 1000) {
+        queryPageSize = 1000; // Limit the maximum page size to 1000
+    }
+
+        return PageRequest.of(queryPageNumber, queryPageSize);
+}
 
 
 private List<Beer> getBeersByName(String beerName) {
